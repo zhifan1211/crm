@@ -14,6 +14,7 @@ import com.example.demo.model.entity.Admin;
 import com.example.demo.model.entity.Unit;
 import com.example.demo.repository.AdminRepository;
 import com.example.demo.service.AdminService;
+import com.example.demo.service.IdGeneratorService;
 import com.example.demo.util.Hash;
 
 @Service
@@ -24,6 +25,9 @@ public class AdminServiceImpl implements AdminService {
 	
 	@Autowired
 	private AdminMapper adminMapper;
+	
+	@Autowired
+	private IdGeneratorService idGeneratorService;
 	
 	// 用 id 得到管理者
 	@Override
@@ -44,7 +48,9 @@ public class AdminServiceImpl implements AdminService {
 	// 新增管理者
 	@Override
 	public void addAdmin(AdminDTO adminDTO, String plainPassword) {
-		// 判斷 id 是否存在
+		// 自動產生 id
+		String newAdminId = idGeneratorService.generateId("AD");
+		// 判斷 id 是否存在 (保險起見)
 		Optional<Admin> optAdmin = adminRepository.findById(adminDTO.getAdminId());
 		if(optAdmin.isPresent()) {
 			throw new AdminAlreadyExistException("新增失敗，管理員ID:" + adminDTO.getAdminId() + "已存在");
@@ -54,6 +60,7 @@ public class AdminServiceImpl implements AdminService {
 		String passwordHash = Hash.getHash(plainPassword, salt);
 		// 進入新增程序
 		// DTO 轉 Entity
+		adminDTO.setAdminId(newAdminId); // 把生成的 ID 放進 DTO
 		Admin admin = adminMapper.toEntity(adminDTO);
 		// 存入 Entity
 		admin.setSalt(salt);

@@ -30,7 +30,7 @@ public class PointUsage {
 	private PointCollection pointCollection;
 	
 	@Column(name = "consume_point")
-	private Integer consumePoint;
+	private Integer consumePoint = 0;
 	
 	
 }

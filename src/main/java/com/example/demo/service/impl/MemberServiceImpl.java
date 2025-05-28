@@ -15,6 +15,7 @@ import com.example.demo.model.entity.Gender;
 import com.example.demo.model.entity.Level;
 import com.example.demo.model.entity.Member;
 import com.example.demo.repository.MemberRepository;
+import com.example.demo.service.IdGeneratorService;
 import com.example.demo.service.MemberService;
 import com.example.demo.util.Hash;
 
@@ -26,6 +27,9 @@ public class MemberServiceImpl implements MemberService{
 	
 	@Autowired
 	private MemberMapper memberMapper;
+	
+	@Autowired
+	private IdGeneratorService idGeneratorService;
 	
 	// 用 id 查詢得到指定會員
 	@Override
@@ -46,7 +50,9 @@ public class MemberServiceImpl implements MemberService{
 	// 新增單筆會員
 	@Override
 	public void addMember(MemberDTO memberDTO, String plainPassword) {
-		// 判斷 id 是否存在
+		// 自動產生會員 id
+		String newMemberId = idGeneratorService.generateId("MB");
+		// 判斷 id 是否存在(保險起見)
 		Optional<Member> optMember = memberRepository.findById(memberDTO.getMemberId());
 		if(optMember.isPresent()) {
 			throw new MemberAlreadyExistException("新增失敗，會員ID:" + memberDTO.getMemberId() + "已存在");
@@ -56,6 +62,7 @@ public class MemberServiceImpl implements MemberService{
 		String passwordHash = Hash.getHash(plainPassword, salt);
 		// 進入新增程序
 		// DTO 轉 Entity
+		memberDTO.setMemberId(newMemberId); // 把生成的 ID 放進 DTO
 		Member member = memberMapper.toEntity(memberDTO);
 		// 存入 Entity
 		member.setSalt(salt);

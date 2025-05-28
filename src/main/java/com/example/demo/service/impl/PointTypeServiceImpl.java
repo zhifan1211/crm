@@ -13,6 +13,7 @@ import com.example.demo.model.dto.PointTypeDTO;
 import com.example.demo.model.entity.Category;
 import com.example.demo.model.entity.PointType;
 import com.example.demo.repository.PointTypeRepository;
+import com.example.demo.service.IdGeneratorService;
 import com.example.demo.service.PointTypeService;
 
 @Service
@@ -23,6 +24,9 @@ public class PointTypeServiceImpl implements PointTypeService {
 	
 	@Autowired
 	private PointTypeMapper pointTypeMapper;
+	
+	@Autowired
+	private IdGeneratorService idGeneratorService;
 	
 	// 查詢所有點數類型
 	@Override
@@ -44,6 +48,8 @@ public class PointTypeServiceImpl implements PointTypeService {
 	// 新增單筆點數類型
 	@Override
 	public void addType(PointTypeDTO pointTypeDTO) {
+		// 自動產生 id
+		String newTypeId = idGeneratorService.generateId("TP");
 		// 判斷 id 是否存在
 		Optional<PointType> optType = pointTypeRepository.findById(pointTypeDTO.getTypeId());
 		if(optType.isPresent()) { // 如果 id 已存在
@@ -51,6 +57,7 @@ public class PointTypeServiceImpl implements PointTypeService {
 		}
 		// 進入新增程序
 		// DTO 轉 Entity
+		pointTypeDTO.setTypeId(newTypeId); // 把生成的 ID 放進 DTO
 		PointType pointType = pointTypeMapper.toEntity(pointTypeDTO);
 		// 將 Entity pointType 存入
 		pointTypeRepository.saveAndFlush(pointType);
