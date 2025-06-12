@@ -20,7 +20,7 @@ public class EmailServiceImpl implements EmailService{
 		SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
         message.setTo(to);
-        message.setSubject("OTTER HOTEL - 正式會員驗證信");
+        message.setSubject("Otter Point - 驗證信");
         message.setText("尊敬的會員您好，您的驗證碼為 " + code.getCode() + " ，請於 10 分鐘內完成驗證。");
 
         mailSender.send(message);
