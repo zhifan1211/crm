@@ -1,20 +1,27 @@
 package com.example.demo.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
 
+import com.example.demo.model.dto.ChangePasswordDTO;
 import com.example.demo.model.dto.MemberDTO;
-import com.example.demo.model.entity.Gender;
-import com.example.demo.model.entity.Level;
+import com.example.demo.model.dto.MemberEditDTO;
+import com.example.demo.model.dto.MemberRegisterDTO;
+import com.example.demo.model.dto.MemberViewDTO;
+import com.example.demo.model.dto.ResetPasswordDTO;
+import com.example.demo.model.entity.Member;
 
 public interface MemberService {
-	public MemberDTO getMemberById(String memberId);
+	List<MemberViewDTO> getAllMembers();
+	public MemberViewDTO getMemberViewById(String memberId);
 	public MemberDTO getMemberByPhoneNumber(String phoneNumber);
-	public void addMember(MemberDTO memberDTO, String plainPassword);
-	public void addMember(String memberId, String lastName, String firstName, Gender gender, String phoneNumber, String password, Level level,
-						  String email, String region, LocalDate birthDate, Boolean confirmEmail, LocalDateTime createdAt, LocalDateTime updatedAt);
-	public void updateMember(String memberId, MemberDTO memberDTO);
-	public void updateMember(String memberId, String lastName, String firstName, Gender gender, String phoneNumber, String password, Level level,
-			  				 String email, String region, LocalDate birthDate, Boolean confirmEmail, LocalDateTime createdAt, LocalDateTime updatedAt);
-	public void deleteMember(String memberId);
+	public void addMember(MemberRegisterDTO memberRegisterDTO); // 註冊會員
+	public MemberEditDTO updateMemberByMember(String memberId, MemberEditDTO memberEditDTO); // 會員更新個人資訊
+	public MemberEditDTO getMemberById(String memberId);
+	public void setEmailConfirmed(String memberId);
+	public void changePassword(String memberId, ChangePasswordDTO dto);
+    public void changePasswordByPhone(String phoneNumber, String newPassword);
+	public void upgradeMemberLevelIfQualified(Member member) ;
+	public boolean isFormalQualified(Member member);
+	public boolean isNotBlank(String s);
+	public void toggleActive(String memberId);
 }

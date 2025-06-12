@@ -32,7 +32,7 @@ public class PointCollection {
 	@Column(name = "remain_point", nullable = false)
 	private Integer remainPoint;
 	
-	@OneToMany(mappedBy = "pointRemain")
+	@OneToMany(mappedBy = "pointCollection")
 	private List<PointUsage> pointUsages = new ArrayList<>();
 	
 }

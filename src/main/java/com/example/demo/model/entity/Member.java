@@ -51,7 +51,7 @@ public class Member {
 	
 	@Enumerated(EnumType.STRING) // 將 level 儲存為字串 "passer" / "formal" 
 	@Column(name = "level", nullable = false)
-	private Level level = Level.passer;
+	private Level level = Level.PASSER;
 	
 	@Column(name = "email", length = 255)
 	private String email;
@@ -64,6 +64,9 @@ public class Member {
     
     @Column(name = "confirm_email", nullable = false)
 	private Boolean confirmEmail = false;
+    
+	@Column(name = "active", nullable = false)
+	private Boolean active = true;
     
     @CreationTimestamp // 自動記錄建立時間
     @Column(name = "created_at", updatable = false)  // 不可更新

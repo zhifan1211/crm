@@ -27,7 +27,7 @@ public class AdminCertServiceImpl implements AdminCertService {
 			throw new PasswordInvalidException("密碼錯誤");
 		}
 		// 3. 簽發憑證
-		AdminCert adminCert = new AdminCert(admin.getAdminId(), admin.getUsername());
+		AdminCert adminCert = new AdminCert(admin.getAdminId(), admin.getUsername(), admin.getUnit());
 		return adminCert;
 	}
 	

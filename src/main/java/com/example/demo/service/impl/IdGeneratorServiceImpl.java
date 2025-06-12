@@ -18,7 +18,7 @@ public class IdGeneratorServiceImpl implements IdGeneratorService {
     @Transactional // 確保+1與儲存是同一個交易，避免錯誤
     public String generateId(String prefix) {
         IdSequence idSequence = idSequenceRepository.findById(prefix) // 從資料庫找 prefix 對應的前綴詞
-                .orElse(new IdSequence(prefix, 0)); // 若尚未建立則預設從 0 開始
+                .orElse(new IdSequence(prefix, 	0)); // 若尚未建立則預設從 0 開始
         
         // +1，取得新的流水號
         Integer nextValue = idSequence.getCurrentValue() + 1;

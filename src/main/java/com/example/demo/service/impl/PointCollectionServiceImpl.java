@@ -47,7 +47,7 @@ public class PointCollectionServiceImpl implements PointCollectionService{
 	// 新增單筆點數池(僅對點數增加有效)
 	@Override
 	public void addCollection(PointLog pointLog) {
-		if(pointLog.getPointType().getCategory() != Category.add) {
+		if(pointLog.getPointType().getCategory() != Category.ADD) {
 			 throw new IllegalArgumentException("新增失敗: 點數類型非「派發」類型");
 		}
 		// 自動產生 id
@@ -57,5 +57,17 @@ public class PointCollectionServiceImpl implements PointCollectionService{
 	    collection.setCollectionId(newCollectionId); // 自動產生 id
 	    collection.setPointLog(pointLog); // 綁定來源 log
 	    collection.setRemainPoint(pointLog.getPoints()); // 初始剩餘點 = 原始點數
+	    
+	    pointCollectionRepository.save(collection);
+
+	}
+	
+	// 查詢單一會員的有效點數（總合）
+	@Override
+	public int getMemberRemainingPoint(String memberId) {
+		List<PointCollection> pointCollections = pointCollectionRepository.findValidCollectionsByMemberId(memberId);
+		return pointCollections.stream()
+                			   .mapToInt(PointCollection::getRemainPoint)
+                			   .sum();
 	}
 }

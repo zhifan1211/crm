@@ -55,12 +55,12 @@ public class PointUsageServiceImpl implements PointUsageService {
 	@Override
 	@Transactional
 	public void addUsage(PointLog pointLog) {
-	    if (pointLog.getPointType().getCategory() != Category.consume) {
+	    if (pointLog.getPointType().getCategory() != Category.CONSUME) {
 	        throw new IllegalArgumentException("新增失敗: 點數類型非「消耗」類型");
 	    }
 	    int toConsume = pointLog.getPoints(); // 本次要扣的總點數
 	    // 建立一個 List, 取出所有還有剩餘點數的點數池, 並依照建立時間由舊到新排序
-	    List<PointCollection> collections = pointCollectionRepository.findByRemainPointGreaterThan();
+	    List<PointCollection> collections = pointCollectionRepository.findValidCollectionsByMemberId(pointLog.getMember().getMemberId());
 	    // 建立一個 List, 來收集本次扣點要儲存的 usage 紀錄
 	    List<PointUsage> usagesToSave = new ArrayList<>();
 	    // 開始從最舊、有剩餘點數的點數池依序扣除
@@ -73,7 +73,7 @@ public class PointUsageServiceImpl implements PointUsageService {
 
 	        // 建立一筆 usage（紀錄這筆扣點的來源池與數量）
 	        PointUsage usage = new PointUsage();
-			String newUsageId = idGeneratorService.generateId("CL");
+			String newUsageId = idGeneratorService.generateId("UG");
 	        usage.setUsageId(newUsageId);									// 自動產生 ID
 	        usage.setPointLog(pointLog);									// 指向這次的消費 log
 	        usage.setPointCollection(pointCollection);						// 被扣除的池子

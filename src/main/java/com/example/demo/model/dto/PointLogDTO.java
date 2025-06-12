@@ -17,6 +17,5 @@ public class PointLogDTO {
     private Integer points;
     private LocalDateTime createdAt;
     private LocalDateTime expiredAt;
-    private String orderId;
     private String note; 
 }

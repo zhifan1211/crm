@@ -1,5 +1,7 @@
 package com.example.demo.model.dto;
 
+import com.example.demo.model.entity.Unit;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,4 +12,5 @@ import lombok.ToString;
 public class AdminCert {
 	private String adminId;
 	private String username;
+	private Unit unit;
 }

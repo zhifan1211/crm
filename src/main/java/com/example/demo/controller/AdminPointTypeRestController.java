@@ -6,18 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.exception.PointTypeException;
 import com.example.demo.model.dto.PointTypeDTO;
-import com.example.demo.repository.MemberRepository;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.service.PointTypeService;
 
@@ -26,26 +25,23 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 
 @RestController
-@RequestMapping(value = {"/admin/point_type"})
+@RequestMapping(value = {"/admin/point-types"})
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:8002"}, allowCredentials = "true")
-public class PointTypeRestController {
-
-    private final MemberRepository memberRepository;
+public class AdminPointTypeRestController {
 	
 	@Autowired
-	PointTypeService pointTypeService;
-
-    PointTypeRestController(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
+	public PointTypeService pointTypeService;
 	
 	// 取得所有點數類型列表
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<PointTypeDTO>>> findAllTypes(){
-		List<PointTypeDTO> pointTypeDTOs = pointTypeService.getAllTypes();
-		String message = pointTypeDTOs.isEmpty() ? "查無資料" : "查詢成功";
-		return ResponseEntity.ok(ApiResponse.success(message, pointTypeDTOs));
-	} 
+	public ResponseEntity<ApiResponse<List<PointTypeDTO>>> findAllTypes(
+	    @RequestParam(required = false) Boolean active,
+	    @RequestParam(required = false) String category) {
+
+	    List<PointTypeDTO> dtos = pointTypeService.getFilteredTypes(active, category);
+	    return ResponseEntity.ok(ApiResponse.success("查詢成功", dtos));
+	}
+
 	
 	// 取得單筆點數類型
 	@GetMapping("/{typeId}")
@@ -60,8 +56,8 @@ public class PointTypeRestController {
 		if(bindingResult.hasErrors()) {
 			throw new PointTypeException("新增失敗:" + bindingResult.getAllErrors().get(0).getDefaultMessage());
 		}
-		pointTypeService.addType(pointTypeDTO);
-		return ResponseEntity.ok(ApiResponse.success("點數類型新增成功", pointTypeDTO));
+		PointTypeDTO savedDTO = pointTypeService.addType(pointTypeDTO);
+		return ResponseEntity.ok(ApiResponse.success("點數類型新增成功", savedDTO));
 	}
 	
 	// 修改點數類型
@@ -70,20 +66,13 @@ public class PointTypeRestController {
 		if(bindingResult.hasErrors()) {
 			throw new PointTypeException("修改失敗:" + bindingResult.getAllErrors().get(0).getDefaultMessage());
 		}
-		pointTypeService.updateType(typeId, pointTypeDTO);
-		return ResponseEntity.ok(ApiResponse.success("點數類型修改成功", pointTypeDTO));
+		PointTypeDTO updatedDTO = pointTypeService.updateType(typeId, pointTypeDTO);
+		return ResponseEntity.ok(ApiResponse.success("點數類型修改成功", updatedDTO));
 	}
 	
-	// 刪除點數類型
-	@DeleteMapping("/{typeId}")
-	public ResponseEntity<ApiResponse<String>> deleteType(@PathVariable String typeId){
-		pointTypeService.deleteType(typeId);
-		return ResponseEntity.ok(ApiResponse.success("點數類型刪除成功", typeId));
-	}
-	
-	// 錯誤處理
-	@ExceptionHandler({PointTypeException.class})
+	@ExceptionHandler(PointTypeException.class)
 	public ResponseEntity<ApiResponse<Void>> handlePointTypeException(PointTypeException e){
-		return ResponseEntity.ok(ApiResponse.error(500, e.getMessage()));
+	    return ResponseEntity.badRequest().body(ApiResponse.error(400, e.getMessage()));
 	}
+
 }

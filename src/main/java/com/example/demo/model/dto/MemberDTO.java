@@ -24,6 +24,7 @@ public class MemberDTO {
     private String region;
     private LocalDate birthDate;
     private Boolean confirmEmail;
+    private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

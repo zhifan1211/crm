@@ -53,9 +53,6 @@ public class PointLog {
 	@Column(name = "expired_at")
 	private LocalDateTime expiredAt;
 	
-	@Column(name = "order_id")
-	private String orderId;
-	
 	@Column(name = "note")
 	private String note;
 	
@@ -67,7 +64,7 @@ public class PointLog {
 	
 	@PrePersist
 	public void prePersist() {
-		if (pointType != null && pointType.getCategory() == Category.add) { // 只有新增點數 add 類型才有過期日 expiredAt
+		if (pointType != null && pointType.getCategory() == Category.ADD) { // 只有新增點數 add 類型才有過期日 expiredAt
 	        LocalDate expiredDate = createdAt.toLocalDate().plusYears(1);
 	        this.expiredAt = expiredDate.atTime(23, 59, 59); // 只取建立時間的「日期」+1年生成過期日，並確保時間都設定到過期日的23:59:59
 	    } else {

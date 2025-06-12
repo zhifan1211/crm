@@ -1,16 +1,15 @@
 package com.example.demo.service;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
+import com.example.demo.model.dto.AdminCreateDTO;
 import com.example.demo.model.dto.AdminDTO;
-import com.example.demo.model.entity.Unit;
+import com.example.demo.model.dto.ChangePasswordDTO;
 
 public interface AdminService {
 	public AdminDTO getAdminById(String adminId);
-	public AdminDTO getAdminByUsername(String username);
-	public void addAdmin(AdminDTO adminDTO, String plainPassword);
-	public void addAdmin(String adminId, String username, String name, String password, Unit unit, Boolean active, LocalDateTime createdAt);
-	public void updateAdmin(String adminId, AdminDTO adminDTO);
-	public void updateAdmin(String adminId, String username, String name, String password, Unit unit, Boolean active, LocalDateTime createdAt);
-	public void deleteAdmin(String adminId);
+	public void addAdmin(AdminCreateDTO adminCreateDTO);
+	public void updateAdmin(AdminDTO adminDTO);
+	List<AdminDTO> getAllAdmins();
+	void changePassword(String adminId, ChangePasswordDTO dto);
 }
