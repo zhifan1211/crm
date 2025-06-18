@@ -7,7 +7,6 @@ import com.example.demo.model.dto.MemberDTO;
 import com.example.demo.model.dto.MemberEditDTO;
 import com.example.demo.model.dto.MemberRegisterDTO;
 import com.example.demo.model.dto.MemberViewDTO;
-import com.example.demo.model.dto.ResetPasswordDTO;
 import com.example.demo.model.entity.Member;
 
 public interface MemberService {

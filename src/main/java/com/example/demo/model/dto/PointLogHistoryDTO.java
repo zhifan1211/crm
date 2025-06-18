@@ -17,4 +17,5 @@ public class PointLogHistoryDTO {
     private Integer remainPoints; // 只在 ADD 顯示
 	private LocalDateTime createdAt;
 	private LocalDateTime expiredAt;   // 只在 ADD 顯示
+	private String unit;
 }

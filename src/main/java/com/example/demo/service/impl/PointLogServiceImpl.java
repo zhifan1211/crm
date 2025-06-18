@@ -185,6 +185,7 @@ public class PointLogServiceImpl implements PointLogService{
 	        history.setCategory(log.getPointType().getCategory().name());
 	        history.setOriginalPoints(log.getPoints());
 	        history.setCreatedAt(log.getCreatedAt());
+	        history.setUnit(log.getAdmin().getUnit().name());
 	    try {
 	        if (log.getPointType().getCategory() == Category.ADD) {
 	        	history.setRemainPoints(log.getPointCollection() != null ? log.getPointCollection().getRemainPoint() : 0);

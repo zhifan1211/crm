@@ -96,10 +96,16 @@
 		    <version>2.0.1</version>
 		</dependency>
 		
-		<!-- 整合 JavaMail 和 Sprinboot 功能 -->
+		<!-- 整合 JavaMail 和 Springboot 功能 -->
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		
+		<!-- spring-security -->
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		
 		<dependency>

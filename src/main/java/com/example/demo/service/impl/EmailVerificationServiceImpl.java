@@ -6,13 +6,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.exception.MemberNotFoundException;
 import com.example.demo.model.dto.MemberDTO;
 import com.example.demo.model.dto.ResetCodeDTO;
 import com.example.demo.model.entity.EmailVerification;
-import com.example.demo.model.entity.Member;
 import com.example.demo.repository.EmailVerificationRepository;
-import com.example.demo.repository.MemberRepository;
 import com.example.demo.service.EmailVerificationService;
 import com.example.demo.service.IdGeneratorService;
 import com.example.demo.service.MemberService;

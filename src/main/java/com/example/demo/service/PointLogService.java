@@ -1,14 +1,10 @@
 package com.example.demo.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.example.demo.model.dto.PointLogDTO;
 import com.example.demo.model.dto.PointLogHistoryDTO;
 import com.example.demo.model.dto.PointLogViewDTO;
-import com.example.demo.model.entity.Admin;
-import com.example.demo.model.entity.Member;
-import com.example.demo.model.entity.PointType;
 
 public interface PointLogService {
 	void addLog(PointLogDTO pointLogDTO); // 新增單筆點數紀錄

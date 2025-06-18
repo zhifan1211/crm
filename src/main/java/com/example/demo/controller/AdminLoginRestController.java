@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/admin")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:8002"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:8002",}, allowCredentials = "true")
 public class AdminLoginRestController {
 	
 	@Autowired
@@ -32,6 +32,8 @@ public class AdminLoginRestController {
 			throws CertException{
 		AdminCert adminCert = adminCertService.getAdminCert(username, password);
 		session.setAttribute("adminCert", adminCert);
+		System.out.println("1=> " + session.getAttribute("adminCert"));
+		System.out.println("LOGIN sessionId=" + session.getId());
 		return ResponseEntity.ok(ApiResponse.success("登入成功", null));
 	}
 	
@@ -49,6 +51,9 @@ public class AdminLoginRestController {
 	@GetMapping("/check-login")
 	public ResponseEntity<ApiResponse<Boolean>> checkLogin(HttpSession session){
 		boolean loggedIn = session.getAttribute("adminCert") != null;
+//		loggedIn = true;
+		System.out.println("2=> " + session.getAttribute("adminCert"));
+		System.out.println("CHECK sessionId=" + session.getId());
 		return ResponseEntity.ok(ApiResponse.success("檢查登入", loggedIn));
 	}
 	
