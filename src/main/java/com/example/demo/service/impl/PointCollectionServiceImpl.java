@@ -70,4 +70,19 @@ public class PointCollectionServiceImpl implements PointCollectionService{
                 			   .mapToInt(PointCollection::getRemainPoint)
                 			   .sum();
 	}
+	
+	@Override
+	public String getMemberNearestExpiryDate(String memberId) {
+	    List<PointCollection> pointCollections = pointCollectionRepository.findValidCollectionsByMemberId(memberId);
+	    return pointCollections.stream()
+	            .filter(pc -> pc.getRemainPoint() > 0 
+	                       && pc.getPointLog() != null 
+	                       && pc.getPointLog().getExpiredAt() != null)
+	            .map(pc -> pc.getPointLog().getExpiredAt())
+	            .sorted()
+	            .map(exp -> exp.toLocalDate().toString())
+	            .findFirst()
+	            .orElse(null);
+	}
+
 }

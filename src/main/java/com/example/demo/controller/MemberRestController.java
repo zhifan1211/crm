@@ -16,6 +16,7 @@ import com.example.demo.model.dto.EmailCodeDTO;
 import com.example.demo.model.dto.EmailDTO;
 import com.example.demo.model.dto.MemberCert;
 import com.example.demo.model.dto.MemberEditDTO;
+import com.example.demo.model.dto.MemberInfoDTO;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.service.EmailVerificationService;
 import com.example.demo.service.MemberService;
@@ -31,7 +32,14 @@ public class MemberRestController {
 	@Autowired
 	public EmailVerificationService emailVerificationService;
 	
-	// 取得自己的資料
+	// 取得自己的資料（大部分用）
+	@GetMapping("/info")
+	public ResponseEntity<ApiResponse<MemberInfoDTO>> getMemberInfo(@SessionAttribute("memberCert") MemberCert cert){
+		MemberInfoDTO dto = memberService.getMemberInfo(cert.getMemberId());
+		return ResponseEntity.ok(ApiResponse.success("查詢成功", dto));
+	}
+	
+	// 取得自己的資料（編輯用）
 	@GetMapping("/me")
 	public ResponseEntity<ApiResponse<MemberEditDTO>> getMember(@SessionAttribute("memberCert") MemberCert cert){
 		MemberEditDTO dto = memberService.getMemberById(cert.getMemberId());

@@ -21,12 +21,16 @@ public class AdminCertServiceImpl implements AdminCertService {
 	public AdminCert getAdminCert(String username, String password) throws AdminNotFoundException, PasswordInvalidException {
 		// 1. 是否有此管理員
 		Admin admin = adminRepository.findByUsername(username).orElseThrow(() -> new AdminNotFoundException("查無此管理員"));
-		// 2. 密碼 hash 比對
+		// 2. 是否有被停用
+	    if (!admin.getActive()) {
+	        throw new PasswordInvalidException("此帳號已停用，無法登入");
+	    }
+		// 3. 密碼 hash 比對
 		String passwordHash = Hash.getHash(password, admin.getSalt());
 		if(!passwordHash.equals(admin.getPasswordHash())) {
 			throw new PasswordInvalidException("密碼錯誤");
 		}
-		// 3. 簽發憑證
+		// 4. 簽發憑證
 		AdminCert adminCert = new AdminCert(admin.getAdminId(), admin.getUsername(), admin.getUnit());
 		return adminCert;
 	}

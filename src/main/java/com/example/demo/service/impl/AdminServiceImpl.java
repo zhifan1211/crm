@@ -38,6 +38,14 @@ public class AdminServiceImpl implements AdminService {
 		return dto;
 	}
 	
+	// 用 username 得到管理者
+	@Override
+	public AdminDTO getAdminByUsername(String username) {
+	    Admin admin = adminRepository.findByUsername(username)
+	                                 .orElseThrow(() -> new AdminNotFoundException("查無此管理員"));
+	    return adminMapper.toDto(admin);
+	}
+	
 	// 新增管理者
 	@Override
 	public void addAdmin(AdminCreateDTO adminCreateDTO) {

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.model.dto.MemberDTO;
 import com.example.demo.model.dto.MemberEditDTO;
+import com.example.demo.model.dto.MemberInfoDTO;
 import com.example.demo.model.dto.MemberViewDTO;
 import com.example.demo.model.entity.Member;
 
@@ -38,5 +39,10 @@ public class MemberMapper {
 	// DTO 轉 Entity
 	public Member toEntity(MemberEditDTO memberEditDTO) {
 		return modelMapper.map(memberEditDTO, Member.class);
+	}
+	
+	// Entity 轉 DTO
+	public MemberInfoDTO toInfoDto(Member member) {
+		return modelMapper.map(member, MemberInfoDTO.class);
 	}
 }

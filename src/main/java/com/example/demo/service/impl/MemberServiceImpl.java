@@ -13,6 +13,7 @@ import com.example.demo.mapper.MemberMapper;
 import com.example.demo.model.dto.ChangePasswordDTO;
 import com.example.demo.model.dto.MemberDTO;
 import com.example.demo.model.dto.MemberEditDTO;
+import com.example.demo.model.dto.MemberInfoDTO;
 import com.example.demo.model.dto.MemberRegisterDTO;
 import com.example.demo.model.dto.MemberViewDTO;
 import com.example.demo.model.entity.Level;
@@ -52,7 +53,7 @@ public class MemberServiceImpl implements MemberService{
 	        .toList();
 	}
 
-	// 用 id 查詢得到指定會員
+	// 管理者用 id 查詢得到指定會員
 	@Override
 	public MemberViewDTO getMemberViewById(String memberId) {
 		Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException("ID:"+ memberId +"找不到會員"));
@@ -239,6 +240,16 @@ public class MemberServiceImpl implements MemberService{
 
         member.setActive(!Boolean.TRUE.equals(member.getActive())); // 安全地切換 true/false
         memberRepository.save(member);
+    }
+    
+    // 會員用 id 查詢取得自己資料
+    @Override
+    public MemberInfoDTO getMemberInfo(String memberId) {
+		Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException("ID:"+ memberId +"找不到會員"));
+		MemberInfoDTO dto = memberMapper.toInfoDto(member);
+		dto.setTotalPoints(pointCollectionService.getMemberRemainingPoint(memberId));
+		dto.setNearestExpiryDate(pointCollectionService.getMemberNearestExpiryDate(memberId));
+		return dto;
     }
 
 	

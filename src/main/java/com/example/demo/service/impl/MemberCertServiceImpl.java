@@ -21,12 +21,16 @@ public class MemberCertServiceImpl implements MemberCertService{
 	public MemberCert getMemberCert(String phoneNumber, String password) throws MemberNotFoundException, PasswordInvalidException {
 		// 1. 是否有此管理員
 		Member member = memberRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new MemberNotFoundException("查無此會員"));
-		// 2. 密碼 hash 比對
+		// 2. 是否啟用中
+	    if (!member.getActive()) {
+	        throw new PasswordInvalidException("此帳號已停用，無法登入");
+	    }
+		// 3. 密碼 hash 比對
 		String passwordHash = Hash.getHash(password, member.getSalt());
 		if(!passwordHash.equals(member.getPasswordHash())) {
 			throw new PasswordInvalidException("密碼錯誤");
 		}
-		// 3. 簽發憑證
+		// 4. 簽發憑證
 		MemberCert memberCert = new MemberCert(member.getMemberId());
 		return memberCert;
 	}

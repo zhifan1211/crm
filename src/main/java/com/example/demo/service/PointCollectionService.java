@@ -10,4 +10,5 @@ public interface PointCollectionService {
 	public PointCollectionDTO getCollection(String collectionId); // 查詢單筆點數池
 	public void addCollection(PointLog pointLog); // 新增單筆點數池
 	public int getMemberRemainingPoint(String memberId); // 查詢單一會員的有效點數（總合）
+	public String getMemberNearestExpiryDate(String memberId);
 }

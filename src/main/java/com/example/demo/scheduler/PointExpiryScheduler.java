@@ -51,7 +51,7 @@ public class PointExpiryScheduler {
 
             PointLog originalLog = collection.getPointLog();
             Member member = originalLog.getMember();
-            Admin systemAdmin = adminRepository.findById("admin001").orElseThrow();
+            Admin sourceAdmin = originalLog.getAdmin(); 
             PointType expireType = pointTypeRepository.findById("TP00001")
                     .orElseThrow(() -> new RuntimeException("未找到過期清除用的 PointType (TP00001)"));
 
@@ -59,7 +59,7 @@ public class PointExpiryScheduler {
             PointLog expireLog = new PointLog();
             String newLogId = idGeneratorService.generateId("LG");
             expireLog.setLogId(newLogId);
-            expireLog.setAdmin(systemAdmin);
+            expireLog.setAdmin(sourceAdmin);
             expireLog.setMember(member);
             expireLog.setPointType(expireType);
             expireLog.setPoints(collection.getRemainPoint());

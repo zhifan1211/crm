@@ -5,6 +5,7 @@ import java.util.List;
 import com.example.demo.model.dto.ChangePasswordDTO;
 import com.example.demo.model.dto.MemberDTO;
 import com.example.demo.model.dto.MemberEditDTO;
+import com.example.demo.model.dto.MemberInfoDTO;
 import com.example.demo.model.dto.MemberRegisterDTO;
 import com.example.demo.model.dto.MemberViewDTO;
 import com.example.demo.model.entity.Member;
@@ -23,4 +24,5 @@ public interface MemberService {
 	public boolean isFormalQualified(Member member);
 	public boolean isNotBlank(String s);
 	public void toggleActive(String memberId);
+	public MemberInfoDTO getMemberInfo(String memberId);
 }

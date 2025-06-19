@@ -23,6 +23,7 @@ import com.example.demo.repository.MemberRepository;
 import com.example.demo.repository.PointLogRepository;
 import com.example.demo.repository.PointTypeRepository;
 import com.example.demo.response.ApiResponse;
+import com.example.demo.service.EmailService;
 import com.example.demo.service.IdGeneratorService;
 import com.example.demo.service.PointCollectionService;
 import com.example.demo.service.PointLogService;
@@ -51,6 +52,9 @@ public class PointLogServiceImpl implements PointLogService{
 	
 	@Autowired
 	private PointTypeRepository pointTypeRepository;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	// 新增單筆點數紀錄
 	@Override
@@ -91,10 +95,17 @@ public class PointLogServiceImpl implements PointLogService{
 	    // 3. 存進資料庫
 	    pointLogRepository.save(log);
 
-	    // 4. 根據類別進行派發或消耗
+		// 4. 根據類別進行派發或消耗
 	    switch (pointType.getCategory()) {
 	        case ADD -> pointCollectionService.addCollection(log); // 建立一筆 PointCollection
-	        case CONSUME -> pointUsageService.addUsage(log); // 根據 FIFO 扣點，建立多筆 PointUsage
+	        case CONSUME -> {
+	        	pointUsageService.addUsage(log); // 根據 FIFO 扣點，建立多筆 PointUsage
+		        // 判斷 typeId 是否為 TP00001（如果是點數過期不要寄信通知）
+		        if (!"TP00001".equals(dto.getTypeId())) {
+		            String email = member.getEmail();
+		            emailService.sendConsumeNoticeEmail(email, log);
+		        }
+	        }
 	        default -> throw new IllegalArgumentException("未支援的類別");
 	    }
 	}
