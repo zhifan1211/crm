@@ -251,6 +251,5 @@ public class MemberServiceImpl implements MemberService{
 		dto.setNearestExpiryDate(pointCollectionService.getMemberNearestExpiryDate(memberId));
 		return dto;
     }
-
 	
 }

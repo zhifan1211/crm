@@ -1,5 +1,7 @@
 package com.example.demo.service.impl;
 
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -39,6 +41,26 @@ public class EmailServiceImpl implements EmailService{
 	        message.setTo(to);
 	        message.setSubject("Otter Point - 通知信");
 	        message.setText("尊敬的會員您好，您已成功消耗 " + log.getPoints() + " 點，詳情請登入 Otter Point 查看");
+
+	        mailSender.send(message);
+	        System.out.println("寄出成功給：" + to);
+	    } catch (Exception e) {
+	        System.err.println("寄送消耗通知信失敗：" + e.getMessage());
+	        // 可選：寫入 log 或後續補救措施
+	    }
+	}
+	
+	public void sendExpiryReminderEmail(String to, LocalDate expiryDate){
+	    if (to == null || to.isBlank()) {
+	        System.out.println("未設定 email，不發送通知。");
+	        return;
+	    }
+	    try {
+	        SimpleMailMessage message = new SimpleMailMessage();
+	        message.setFrom(from);
+	        message.setTo(to);
+	        message.setSubject("Otter Point - 通知信");
+	        message.setText("尊敬的會員您好，您的點數最快將於 " + expiryDate + " 過期，為確保您的權益，詳情請登入 Otter Point 查看");
 
 	        mailSender.send(message);
 	        System.out.println("寄出成功給：" + to);

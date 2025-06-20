@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,4 +46,26 @@ public interface MemberRepository extends JpaRepository<Member, String> { // Roo
 		        m.level, m.email, m.region, m.birth_date, m.active, m.created_at, m.updated_at
 		""", nativeQuery = true)
 	List<MemberViewProjection> findAllMemberOverview();
+	
+	// 查時間區間內的新增會員總數
+	@Query("""
+		    SELECT COUNT(m) FROM Member m
+		    WHERE (:start IS NULL OR m.createdAt >= :start)
+		      AND (:end IS NULL OR m.createdAt <= :end)
+		""")
+		Integer countByCreatedAtBetween(@org.springframework.lang.Nullable LocalDateTime start,
+		                                @org.springframework.lang.Nullable LocalDateTime end);
+	
+	// 查時間區間內的新增會員且轉為正式的總數
+	@Query("""
+		    SELECT COUNT(m) FROM Member m
+		    WHERE m.level = 'FORMAL'
+		    AND (:start IS NULL OR m.createdAt >= :start)
+		    AND (:end IS NULL OR m.createdAt <= :end)
+		""")
+		Integer countFormalMembersByCreatedAtBetween(
+		    @org.springframework.lang.Nullable java.time.LocalDateTime start,
+		    @org.springframework.lang.Nullable java.time.LocalDateTime end
+		);
+
 }

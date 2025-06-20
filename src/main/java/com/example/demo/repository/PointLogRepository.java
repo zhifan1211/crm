@@ -34,4 +34,47 @@ public interface PointLogRepository extends JpaRepository<PointLog, String> {
 		    ORDER BY pl.createdAt DESC
 		""")
 	List<PointLog> findAllByOrderByCreatedAtDesc();
+	
+    // 派發總點數（category = ADD）
+    @Query("""
+        SELECT COALESCE(SUM(pl.points), 0)
+        FROM PointLog pl
+        WHERE pl.pointType.category = com.example.demo.model.entity.Category.ADD
+          AND (:start IS NULL OR pl.createdAt >= :start)
+          AND (:end IS NULL OR pl.createdAt <= :end)
+    """)
+    Integer sumAddedPoints(
+        @org.springframework.lang.Nullable java.time.LocalDateTime start,
+        @org.springframework.lang.Nullable java.time.LocalDateTime end
+    );
+
+    // 會員消耗總點數（消耗且排除TP00001）
+    @Query("""
+        SELECT COALESCE(SUM(pl.points), 0)
+        FROM PointLog pl
+        WHERE pl.pointType.category = com.example.demo.model.entity.Category.CONSUME
+          AND pl.pointType.typeId <> 'TP00001'
+          AND (:start IS NULL OR pl.createdAt >= :start)
+          AND (:end IS NULL OR pl.createdAt <= :end)
+    """)
+    Integer sumConsumedPointsExcludeExpire(
+        @org.springframework.lang.Nullable java.time.LocalDateTime start,
+        @org.springframework.lang.Nullable java.time.LocalDateTime end
+    );
+    
+    // 過期點數（只算 TP00001）
+    @Query("""
+        SELECT COALESCE(SUM(pl.points), 0)
+        FROM PointLog pl
+        WHERE pl.pointType.category = com.example.demo.model.entity.Category.CONSUME
+          AND pl.pointType.typeId = 'TP00001'
+          AND (:start IS NULL OR pl.createdAt >= :start)
+          AND (:end IS NULL OR pl.createdAt <= :end)
+    """)
+    Integer sumExpiredPoints(
+        @org.springframework.lang.Nullable java.time.LocalDateTime start,
+        @org.springframework.lang.Nullable java.time.LocalDateTime end
+    );
+    
+    
 }

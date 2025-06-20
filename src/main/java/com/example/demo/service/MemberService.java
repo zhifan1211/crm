@@ -12,17 +12,17 @@ import com.example.demo.model.entity.Member;
 
 public interface MemberService {
 	List<MemberViewDTO> getAllMembers();
-	public MemberViewDTO getMemberViewById(String memberId);
-	public MemberDTO getMemberByPhoneNumber(String phoneNumber);
-	public void addMember(MemberRegisterDTO memberRegisterDTO); // 註冊會員
-	public MemberEditDTO updateMemberByMember(String memberId, MemberEditDTO memberEditDTO); // 會員更新個人資訊
-	public MemberEditDTO getMemberById(String memberId);
-	public void setEmailConfirmed(String memberId);
-	public void changePassword(String memberId, ChangePasswordDTO dto);
-    public void changePasswordByPhone(String phoneNumber, String newPassword);
-	public void upgradeMemberLevelIfQualified(Member member) ;
-	public boolean isFormalQualified(Member member);
-	public boolean isNotBlank(String s);
-	public void toggleActive(String memberId);
-	public MemberInfoDTO getMemberInfo(String memberId);
+	MemberViewDTO getMemberViewById(String memberId);
+	MemberDTO getMemberByPhoneNumber(String phoneNumber);
+	void addMember(MemberRegisterDTO memberRegisterDTO); // 註冊會員
+	MemberEditDTO updateMemberByMember(String memberId, MemberEditDTO memberEditDTO); // 會員更新個人資訊
+	MemberEditDTO getMemberById(String memberId);
+	void setEmailConfirmed(String memberId);
+	void changePassword(String memberId, ChangePasswordDTO dto);
+    void changePasswordByPhone(String phoneNumber, String newPassword);
+	void upgradeMemberLevelIfQualified(Member member) ;
+	boolean isFormalQualified(Member member);
+	boolean isNotBlank(String s);
+	void toggleActive(String memberId);
+	MemberInfoDTO getMemberInfo(String memberId);
 }

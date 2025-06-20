@@ -13,10 +13,6 @@ import com.example.demo.model.entity.PointCollection;
 @Repository
 public interface PointCollectionRepository extends JpaRepository<PointCollection, String> {
 	
-	// 取出所有還有剩餘點數的點數池，並依照建立時間由舊到新排序
-	@Query(value = "SELECT collection_id, remain_point, point_log_id FROM point_collections WHERE remain_point > 0 ORDER BY created_at", nativeQuery = true)
-	List<PointCollection> findByRemainPointGreaterThan();
-	
 	// 根據會員計算剩餘點數總和
 	@Query(value = """
 		    SELECT pc.* 
@@ -32,5 +28,17 @@ public interface PointCollectionRepository extends JpaRepository<PointCollection
 	@Query("SELECT c FROM PointCollection c " +
 		       "WHERE c.remainPoint > 0 AND c.pointLog.expiredAt IS NOT NULL AND c.pointLog.expiredAt < :now")
 	List<PointCollection> findExpiredCollections(@Param("now") LocalDateTime now);
+	
+	// 剩餘未核銷點數（從 PointCollection 表直接 sum）
+	@Query("""
+	    SELECT COALESCE(SUM(pc.remainPoint), 0)
+	    FROM PointCollection pc
+	    WHERE (:start IS NULL OR pc.pointLog.createdAt >= :start)
+	      AND (:end IS NULL OR pc.pointLog.createdAt <= :end)
+	""")
+	Integer sumUnredeemedPoints(
+	    @org.springframework.lang.Nullable java.time.LocalDateTime start,
+	    @org.springframework.lang.Nullable java.time.LocalDateTime end
+	);
 	
 }

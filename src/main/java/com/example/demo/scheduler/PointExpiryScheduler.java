@@ -13,7 +13,6 @@ import com.example.demo.model.entity.PointCollection;
 import com.example.demo.model.entity.PointLog;
 import com.example.demo.model.entity.PointType;
 import com.example.demo.model.entity.PointUsage;
-import com.example.demo.repository.AdminRepository;
 import com.example.demo.repository.PointCollectionRepository;
 import com.example.demo.repository.PointLogRepository;
 import com.example.demo.repository.PointTypeRepository;
@@ -31,9 +30,6 @@ public class PointExpiryScheduler {
 
     @Autowired
     private PointUsageRepository pointUsageRepository;
-
-    @Autowired
-    private AdminRepository adminRepository;
 
     @Autowired
     private PointTypeRepository pointTypeRepository;
