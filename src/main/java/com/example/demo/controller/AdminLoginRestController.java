@@ -3,13 +3,13 @@ package com.example.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.exception.CertException;
 import com.example.demo.model.dto.AdminCert;
@@ -18,48 +18,50 @@ import com.example.demo.service.AdminCertService;
 
 import jakarta.servlet.http.HttpSession;
 
-@Controller
+@RestController
 @RequestMapping("/admin")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:8002",}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:8002"}, allowCredentials = "true")
 public class AdminLoginRestController {
-	
-	@Autowired
-	private AdminCertService adminCertService;
-	
-	// 登入
-	@PostMapping("/login")
-	public ResponseEntity<ApiResponse<Void>> login(@RequestParam String username, @RequestParam String password, HttpSession session)
-			throws CertException{
-		AdminCert adminCert = adminCertService.getAdminCert(username, password);
-		session.setAttribute("adminCert", adminCert);
-		System.out.println("1=> " + session.getAttribute("adminCert"));
-		System.out.println("LOGIN sessionId=" + session.getId());
-		return ResponseEntity.ok(ApiResponse.success("登入成功", null));
-	}
-	
-	// 登出
-	@GetMapping("/logout")
-	public ResponseEntity<ApiResponse<Void>> logout(HttpSession session){
-		if(session.getAttribute("adminCert") == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error(401, "登出失敗: 尚未登入"));
-		}
-		session.invalidate();
-		return ResponseEntity.ok(ApiResponse.success("登出成功", null));
-	}
-	
-	// 確認是否登入，取得 Cert
-	@GetMapping("/check-login")
-	public ResponseEntity<ApiResponse<Boolean>> checkLogin(HttpSession session){
-		boolean loggedIn = session.getAttribute("adminCert") != null;
-//		loggedIn = true;
-		System.out.println("2=> " + session.getAttribute("adminCert"));
-		System.out.println("CHECK sessionId=" + session.getId());
-		return ResponseEntity.ok(ApiResponse.success("檢查登入", loggedIn));
-	}
-	
-	@ExceptionHandler(CertException.class)
-	public ResponseEntity<ApiResponse<Void>> handleCertException(CertException e) {
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-		                     .body(ApiResponse.error(401, "登入失敗: " + e.getMessage()));
-	}
+    
+    @Autowired
+    private AdminCertService adminCertService;
+    
+    // 登入
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<Void>> login(
+            @RequestParam String username, 
+            @RequestParam String password, 
+            HttpSession session) throws CertException {
+        AdminCert adminCert = adminCertService.getAdminCert(username, password);
+        session.setAttribute("adminCert", adminCert);
+        System.out.println("1=> " + session.getAttribute("adminCert"));
+        System.out.println("LOGIN sessionId=" + session.getId());
+        return ResponseEntity.ok(ApiResponse.success("登入成功", null));
+    }
+    
+    // 登出
+    @GetMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(HttpSession session) {
+        if(session.getAttribute("adminCert") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body(ApiResponse.error(401, "登出失敗: 尚未登入"));
+        }
+        session.invalidate();
+        return ResponseEntity.ok(ApiResponse.success("登出成功", null));
+    }
+    
+    // 確認是否登入，取得 Cert
+    @GetMapping("/check-login")
+    public ResponseEntity<ApiResponse<Boolean>> checkLogin(HttpSession session) {
+        boolean loggedIn = session.getAttribute("adminCert") != null;
+        System.out.println("2=> " + session.getAttribute("adminCert"));
+        System.out.println("CHECK sessionId=" + session.getId());
+        return ResponseEntity.ok(ApiResponse.success("檢查登入", loggedIn));
+    }
+    
+    @ExceptionHandler(CertException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCertException(CertException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                             .body(ApiResponse.error(401, "登入失敗: " + e.getMessage()));
+    }
 }
