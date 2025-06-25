@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.exception.PointUsageNotFoundException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.mapper.PointUsageMapper;
 import com.example.demo.model.dto.PointUsageDTO;
 import com.example.demo.model.entity.Category;
@@ -46,7 +46,7 @@ public class PointUsageServiceImpl implements PointUsageService {
 	// 查詢單筆點數追蹤
 	@Override
 	public PointUsageDTO getUsage(String usageId) {
-        PointUsage usage = pointUsageRepository.findById(usageId).orElseThrow(() -> new PointUsageNotFoundException("查無點數使用紀錄: usageId:" + usageId));
+        PointUsage usage = pointUsageRepository.findById(usageId).orElseThrow(() -> new NotFoundException("USAGE_NOT_FOUND","查無點數消耗追蹤"));
         PointUsageDTO dto = pointUsageMapper.toDto(usage);
         return dto;
 	}

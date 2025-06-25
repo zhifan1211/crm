@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.entity.ResetToken;
 import com.example.demo.repository.ResetTokenRepository;
 import com.example.demo.service.ResetTokenService;
@@ -58,7 +59,7 @@ public class ResetTokenServiceImpl implements ResetTokenService{
 	public void markTokenAsUsed(String tokenId) {
 		String tokenHash = TokenHash.hashToken(tokenId);
         ResetToken token = resetTokenRepository.findByTokenHash(tokenHash)
-            .orElseThrow(() -> new RuntimeException("找不到 token"));
+            .orElseThrow(() -> new NotFoundException("TOKEN_NOT_FOUND","查無Token"));
 
         token.setUsed(true);
         resetTokenRepository.save(token);

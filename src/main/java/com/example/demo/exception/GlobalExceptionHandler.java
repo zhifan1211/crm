@@ -1,22 +1,42 @@
 package com.example.demo.exception;
 
+import com.example.demo.response.ApiResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.http.ResponseEntity;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleAllExceptions(Exception ex) {
-        // 回傳有 message 欄位的 JSON 格式
+    // 針對 NotFoundException，給 404 狀態碼
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNotFoundException(NotFoundException ex) {
         return ResponseEntity
-            .status(500)
-            .body(new ErrorMessage("寄送失敗：" + ex.getMessage()));
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(404, ex.getMessage()));
+    }
+    
+    // 針對 AlreadyExistException，給 404 狀態碼
+    @ExceptionHandler(AlreadyExistException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAlreadyExist(AlreadyExistException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(400, ex.getMessage()));
+    }
+    
+    @ExceptionHandler(PointException.class)
+    public ResponseEntity<ApiResponse<Void>> handlePointTypeException(PointException e) {
+        return ResponseEntity
+            .badRequest()
+            .body(ApiResponse.error(400, e.getMessage()));
     }
 
-    // 這是一個簡單的錯誤格式
-    static class ErrorMessage {
-        public String message;
-        public ErrorMessage(String msg) { this.message = msg; }
+    // 針對其他未知例外
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleAllExceptions(Exception ex) {
+        ex.printStackTrace(); // log 留下來
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(500, "系統錯誤：" + ex.getMessage()));
     }
 }

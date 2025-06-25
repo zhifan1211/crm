@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.mapper.ItemMapper;
 import com.example.demo.model.dto.ItemDTO;
 import com.example.demo.model.entity.Item;
@@ -43,7 +44,7 @@ public class ItemServiceImpl implements ItemService{
 	@Override
 	public ItemDTO getItemById(String itemId) {
 		Item item = itemRepository.findById(itemId)
-				.orElseThrow(() -> new RuntimeException("查無商品類型:itemId" + itemId));
+				.orElseThrow(() -> new NotFoundException("ITEM_NOT_FOUND","查無商品類型"));
 		return itemMapper.toDto(item);
 	}
 
@@ -58,7 +59,7 @@ public class ItemServiceImpl implements ItemService{
 	@Override
 	public ItemDTO updateItem(String itemId, ItemDTO itemDTO) {
 		if(!itemRepository.existsById(itemId)) {
-			throw new RuntimeException("修改失敗：" + itemId + "不存在");
+			throw new NotFoundException("ITEM_NOT_FOUND","修改失敗，商品不存在");
 		}
 		Item entity = itemMapper.toEntity(itemDTO);
 		Item saved = itemRepository.saveAndFlush(entity);
@@ -68,7 +69,7 @@ public class ItemServiceImpl implements ItemService{
 	@Override
 	public void deleteItem(String itemId) {
 		if(!itemRepository.existsById(itemId)) {
-			throw new RuntimeException("刪除失敗：" + itemId + "不存在");
+			throw new NotFoundException("ITEM_NOT_FOUND","刪除失敗，商品不存在");
 		}
 	    itemRepository.deleteById(itemId);
 	}

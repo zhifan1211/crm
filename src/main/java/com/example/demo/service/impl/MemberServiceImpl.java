@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.exception.MemberAlreadyExistException;
-import com.example.demo.exception.MemberNotFoundException;
+import com.example.demo.exception.AlreadyExistException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.mapper.MemberMapper;
 import com.example.demo.model.dto.ChangePasswordDTO;
 import com.example.demo.model.dto.MemberDTO;
@@ -56,7 +56,7 @@ public class MemberServiceImpl implements MemberService{
 	// 管理者用 id 查詢得到指定會員
 	@Override
 	public MemberViewDTO getMemberViewById(String memberId) {
-		Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException("ID:"+ memberId +"找不到會員"));
+		Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException("MEMBER_NOT_FOUND", "找不到會員"));
 		MemberViewDTO dto = memberMapper.toViewDto(member);
 		return dto;
 	}
@@ -64,7 +64,7 @@ public class MemberServiceImpl implements MemberService{
 	// 用 電話 查詢指定會員
 	@Override
 	public MemberDTO getMemberByPhoneNumber(String phoneNumber) {
-		Member member = memberRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new MemberNotFoundException("電話:"+ phoneNumber +"找不到會員"));
+		Member member = memberRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new NotFoundException("PHONENUMBER_NOT_FOUND", "找不到會員"));
 		MemberDTO dto = memberMapper.toDto(member);
 		return dto;
 	}
@@ -77,7 +77,7 @@ public class MemberServiceImpl implements MemberService{
 
 	    // 檢查 phone 是否重複
 	    if (memberRepository.findByPhoneNumber(memberRegisterDTO.getPhoneNumber()).isPresent()) {
-	        throw new MemberAlreadyExistException("電話已存在，無法註冊");
+	        throw new AlreadyExistException("PHONENUMBER_ALREADY_EXIST","電話已存在，無法註冊");
 	    }
 
 	    // 加鹽並雜湊密碼
@@ -110,13 +110,13 @@ public class MemberServiceImpl implements MemberService{
 	public MemberEditDTO updateMemberByMember(String memberId, MemberEditDTO memberEditDTO) {
 	    // 先查詢原本的會員資料
 	    Member member = memberRepository.findById(memberId)
-	        .orElseThrow(() -> new MemberNotFoundException("找不到會員 ID: " + memberId));
+	        .orElseThrow(() -> new NotFoundException("MEMBER_NOT_FOUND", "找不到會員"));
 
 	    // 若電話有變更，需檢查是否與其他會員重複
 	    String newPhoneNumber = memberEditDTO.getPhoneNumber();
 	    if (!member.getPhoneNumber().equals(newPhoneNumber)) {
 	        memberRepository.findByPhoneNumber(newPhoneNumber).ifPresent(existing -> {
-	            throw new MemberAlreadyExistException("電話已被其他會員使用");
+	            throw new AlreadyExistException("PHONENUMBER_ALREADY_EXIST","電話已被其他會員註冊");
 	        });
 	        member.setPhoneNumber(newPhoneNumber);
 	    }
@@ -150,7 +150,7 @@ public class MemberServiceImpl implements MemberService{
 	// 用 id 查詢得到指定會員
 	@Override
 	public MemberEditDTO getMemberById(String memberId) {
-		Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException("ID:"+ memberId +"找不到會員"));
+		Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException("MEMBER_NOT_FOUND", "找不到會員"));
 		MemberEditDTO dto = memberMapper.toEditDto(member);
 		return dto;
 	}
@@ -160,7 +160,7 @@ public class MemberServiceImpl implements MemberService{
 	@Transactional
 	public void setEmailConfirmed(String memberId) {
 	    Member member = memberRepository.findById(memberId)
-	        .orElseThrow(() -> new RuntimeException("找不到會員"));
+	        .orElseThrow(() -> new NotFoundException("MEMBER_NOT_FOUND", "找不到會員"));
 	    member.setConfirmEmail(true);
 	    memberRepository.save(member);
 	}
@@ -169,7 +169,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public void changePassword(String memberId, ChangePasswordDTO dto) {
         Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new RuntimeException("會員不存在"));
+            .orElseThrow(() -> new NotFoundException("MEMBER_NOT_FOUND", "找不到會員"));
 
         String salt = member.getSalt();
         String passwordHash = member.getPasswordHash();
@@ -193,7 +193,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public void changePasswordByPhone(String phoneNumber, String newPassword) {
         Member member = memberRepository.findByPhoneNumber(phoneNumber)
-            .orElseThrow(() -> new RuntimeException("會員不存在"));
+            .orElseThrow(() -> new NotFoundException("MEMBER_NOT_FOUND", "找不到會員"));
 
         String newSalt = Hash.getSalt();
         String newHash = Hash.getHash(newPassword, newSalt);
@@ -236,7 +236,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public void toggleActive(String memberId) {
         Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new MemberNotFoundException("找不到會員：" + memberId));
+            .orElseThrow(() -> new NotFoundException("MEMBER_NOT_FOUND", "找不到會員"));
 
         member.setActive(!Boolean.TRUE.equals(member.getActive())); // 安全地切換 true/false
         memberRepository.save(member);
@@ -245,7 +245,7 @@ public class MemberServiceImpl implements MemberService{
     // 會員用 id 查詢取得自己資料
     @Override
     public MemberInfoDTO getMemberInfo(String memberId) {
-		Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException("ID:"+ memberId +"找不到會員"));
+		Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException("MEMBER_NOT_FOUND", "找不到會員"));
 		MemberInfoDTO dto = memberMapper.toInfoDto(member);
 		dto.setTotalPoints(pointCollectionService.getMemberRemainingPoint(memberId));
 		dto.setNearestExpiryDate(pointCollectionService.getMemberNearestExpiryDate(memberId));

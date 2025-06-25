@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.exception.PointTypeException;
+import com.example.demo.exception.PointException;
 import com.example.demo.model.dto.PointTypeDTO;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.service.PointTypeService;
@@ -54,7 +54,7 @@ public class AdminPointTypeRestController {
 	@PostMapping
 	public ResponseEntity<ApiResponse<PointTypeDTO>> addType(@Valid @RequestBody PointTypeDTO pointTypeDTO, BindingResult bindingResult){
 		if(bindingResult.hasErrors()) {
-			throw new PointTypeException("新增失敗:" + bindingResult.getAllErrors().get(0).getDefaultMessage());
+			throw new PointException("新增失敗:" + bindingResult.getAllErrors().get(0).getDefaultMessage());
 		}
 		PointTypeDTO savedDTO = pointTypeService.addType(pointTypeDTO);
 		return ResponseEntity.ok(ApiResponse.success("點數類型新增成功", savedDTO));
@@ -64,14 +64,14 @@ public class AdminPointTypeRestController {
 	@PutMapping("/{typeId}")
 	public ResponseEntity<ApiResponse<PointTypeDTO>> updateType(@PathVariable String typeId, @Valid @RequestBody PointTypeDTO pointTypeDTO, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()) {
-			throw new PointTypeException("修改失敗:" + bindingResult.getAllErrors().get(0).getDefaultMessage());
+			throw new PointException("修改失敗:" + bindingResult.getAllErrors().get(0).getDefaultMessage());
 		}
 		PointTypeDTO updatedDTO = pointTypeService.updateType(typeId, pointTypeDTO);
 		return ResponseEntity.ok(ApiResponse.success("點數類型修改成功", updatedDTO));
 	}
 	
-	@ExceptionHandler(PointTypeException.class)
-	public ResponseEntity<ApiResponse<Void>> handlePointTypeException(PointTypeException e){
+	@ExceptionHandler(PointException.class)
+	public ResponseEntity<ApiResponse<Void>> handlePointTypeException(PointException e){
 	    return ResponseEntity.badRequest().body(ApiResponse.error(400, e.getMessage()));
 	}
 

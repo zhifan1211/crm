@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.exception.AdminAlreadyExistException;
-import com.example.demo.exception.AdminNotFoundException;
+import com.example.demo.exception.AlreadyExistException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.mapper.AdminMapper;
 import com.example.demo.model.dto.AdminCreateDTO;
 import com.example.demo.model.dto.AdminDTO;
@@ -33,7 +33,7 @@ public class AdminServiceImpl implements AdminService {
 	// 用 id 得到管理者
 	@Override
 	public AdminDTO getAdminById(String adminId) {
-		Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("ID:"+ adminId +"找不到管理員"));
+		Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new NotFoundException("ADMIN_NOT_FOUND","查無此管理員"));
 		AdminDTO dto  = adminMapper.toDto(admin);
 		return dto;
 	}
@@ -44,7 +44,7 @@ public class AdminServiceImpl implements AdminService {
 	    String newAdminId = idGeneratorService.generateId("AD");
 
 	    if (adminRepository.findByUsername(adminCreateDTO.getUsername()).isPresent()) {
-	        throw new AdminAlreadyExistException("新增失敗，帳號 " + adminCreateDTO.getUsername() + " 已存在");
+	        throw new AlreadyExistException("ADMIN_ALREADY_EXIST","管理員已存在");
 	    }
 
 	    String plainPassword = "otterpoint";
@@ -64,7 +64,7 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public void updateAdmin(AdminDTO adminDTO) {
 	    Admin admin = adminRepository.findById(adminDTO.getAdminId())
-	        .orElseThrow(() -> new AdminNotFoundException("查無此管理者：" + adminDTO.getAdminId()));
+	        .orElseThrow(() -> new NotFoundException("ADMIN_NOT_FOUND","查無此管理員"));
 
 	    // 更新可編輯欄位
 	    admin.setUsername(adminDTO.getUsername());
@@ -90,7 +90,7 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public void changePassword(String adminId, ChangePasswordDTO dto) {
 	    Admin admin = adminRepository.findById(adminId)
-	        .orElseThrow(() -> new AdminNotFoundException("找不到管理者：" + adminId));
+	        .orElseThrow(() -> new NotFoundException("ADMIN_NOT_FOUND","查無此管理員"));
 
 	    // 檢查舊密碼是否正確
 	    String hashOld = Hash.getHash(dto.getOldPassword(), admin.getSalt());

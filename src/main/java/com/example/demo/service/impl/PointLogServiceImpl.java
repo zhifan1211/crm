@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.example.demo.exception.AlreadyExistException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.dto.PointLogDTO;
 import com.example.demo.model.dto.PointLogHistoryDTO;
 import com.example.demo.model.dto.PointLogViewDTO;
@@ -62,21 +64,21 @@ public class PointLogServiceImpl implements PointLogService{
 	public void addLog(PointLogDTO dto) throws RuntimeException {
 	    // 1. 產生 ID 並檢查是否存在
 	    String newLogId = idGeneratorService.generateId("LG");
-	    if(pointLogRepository.findById(newLogId).isPresent()) throw new RuntimeException("ID已存在");
+	    if(pointLogRepository.findById(newLogId).isPresent()) throw new AlreadyExistException("LOG_ALREADY_EXIST","ID已存在");
 
 	    // 2. 轉成 Entity 並補上 admin、member、pointType（這三個要從 DB 抓）
 	    PointLog log = new PointLog();
 	    
 	    Member member = memberRepository.findById(dto.getMemberId())
-		        .orElseThrow(() -> new RuntimeException("找不到會員"));
+		        .orElseThrow(() -> new NotFoundException("MEMBER_NOT_FOUND","查無會員"));
 		    log.setMember(member);
 
 	    Admin admin = adminRepository.findById(dto.getAdminId())
-	        .orElseThrow(() -> new RuntimeException("找不到管理員"));
+	        .orElseThrow(() -> new NotFoundException("ADMIN_NOT_FOUND","查無管理員"));
 	    log.setAdmin(admin);
 
 	    PointType pointType = pointTypeRepository.findById(dto.getTypeId())
-	        .orElseThrow(() -> new RuntimeException("找不到點數類型"));
+	        .orElseThrow(() -> new NotFoundException("TYPE_NOT_FOUND","查無點數類型"));
 	    log.setPointType(pointType);
 	    
 	    if (dto.getPoints().intValue() <= 0) {

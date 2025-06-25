@@ -3,7 +3,7 @@ package com.example.demo.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.exception.AdminNotFoundException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.exception.PasswordInvalidException;
 import com.example.demo.model.dto.AdminCert;
 import com.example.demo.model.entity.Admin;
@@ -18,9 +18,9 @@ public class AdminCertServiceImpl implements AdminCertService {
 	private AdminRepository adminRepository;
 
 	@Override
-	public AdminCert getAdminCert(String username, String password) throws AdminNotFoundException, PasswordInvalidException {
+	public AdminCert getAdminCert(String username, String password) throws NotFoundException, PasswordInvalidException {
 		// 1. 是否有此管理員
-		Admin admin = adminRepository.findByUsername(username).orElseThrow(() -> new AdminNotFoundException("查無此管理員"));
+		Admin admin = adminRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("ADMIN_NOT_FOUND","查無此管理員"));
 		// 2. 是否有被停用
 	    if (!admin.getActive()) {
 	        throw new PasswordInvalidException("此帳號已停用，無法登入");

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.exception.PointTypeNotFoundException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.mapper.PointTypeMapper;
 import com.example.demo.model.dto.PointTypeDTO;
 import com.example.demo.model.entity.Category;
@@ -51,7 +51,7 @@ public class PointTypeServiceImpl implements PointTypeService {
     @Override
     public PointTypeDTO getType(String typeId) {
         PointType pointType = pointTypeRepository.findById(typeId)
-                .orElseThrow(() -> new PointTypeNotFoundException("查無點數類型：typeId " + typeId));
+                .orElseThrow(() -> new NotFoundException("TYPE_NOT_FOUND","查無點數類型"));
         return pointTypeMapper.toDto(pointType);
     }
 
@@ -68,7 +68,7 @@ public class PointTypeServiceImpl implements PointTypeService {
     @Override
     public PointTypeDTO updateType(String typeId, PointTypeDTO pointTypeDTO) {
         if (!pointTypeRepository.existsById(typeId)) {
-            throw new PointTypeNotFoundException("修改失敗：點數類型名稱 " + pointTypeDTO.getName() + " 不存在");
+            throw new NotFoundException("TYPE_NOT_FOUND","修改失敗，查無點數類型");
         }
         pointTypeDTO.setTypeId(typeId);
         PointType entity = pointTypeMapper.toEntity(pointTypeDTO);

@@ -3,7 +3,7 @@ package com.example.demo.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.exception.MemberNotFoundException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.exception.PasswordInvalidException;
 import com.example.demo.model.dto.MemberCert;
 import com.example.demo.model.entity.Member;
@@ -18,9 +18,9 @@ public class MemberCertServiceImpl implements MemberCertService{
 	public MemberRepository memberRepository;
 
 	@Override
-	public MemberCert getMemberCert(String phoneNumber, String password) throws MemberNotFoundException, PasswordInvalidException {
+	public MemberCert getMemberCert(String phoneNumber, String password) throws NotFoundException, PasswordInvalidException {
 		// 1. 是否有此管理員
-		Member member = memberRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new MemberNotFoundException("查無此會員"));
+		Member member = memberRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new NotFoundException("MEMBER_NOT_FOUND","查無此會員"));
 		// 2. 是否啟用中
 	    if (!member.getActive()) {
 	        throw new PasswordInvalidException("此帳號已停用，無法登入");
