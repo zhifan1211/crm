@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,10 @@ import com.example.demo.exception.CertException;
 import com.example.demo.model.dto.AdminCert;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.service.AdminCertService;
+import com.example.demo.service.CaptchaService;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
@@ -26,16 +31,28 @@ public class AdminLoginRestController {
     @Autowired
     private AdminCertService adminCertService;
     
+    @Autowired
+    private CaptchaService captchaService;
+    
     // 登入
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Void>> login(
             @RequestParam String username, 
             @RequestParam String password, 
+            @RequestParam String captcha,
             HttpSession session) throws CertException {
+        // 先比對驗證碼
+        boolean captchaValid = captchaService.validateCaptcha(captcha, session);
+        if (!captchaValid) {
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(400, "驗證碼錯誤"));
+        }
+
+        // 再檢查帳密
         AdminCert adminCert = adminCertService.getAdminCert(username, password);
         session.setAttribute("adminCert", adminCert);
-        System.out.println("1=> " + session.getAttribute("adminCert"));
-        System.out.println("LOGIN sessionId=" + session.getId());
+
         return ResponseEntity.ok(ApiResponse.success("登入成功", null));
     }
     
@@ -57,6 +74,17 @@ public class AdminLoginRestController {
         System.out.println("2=> " + session.getAttribute("adminCert"));
         System.out.println("CHECK sessionId=" + session.getId());
         return ResponseEntity.ok(ApiResponse.success("檢查登入", loggedIn));
+    }
+    
+    // 圖形驗證碼
+    @GetMapping("/captcha")
+    public void getCaptcha(HttpServletResponse response, HttpSession session) throws IOException {
+        response.setContentType("image/jpeg");
+        byte[] imageBytes = captchaService.generateCaptcha(session);
+        ServletOutputStream out = response.getOutputStream();
+        out.write(imageBytes);
+        out.flush();
+        out.close();
     }
     
     @ExceptionHandler(CertException.class)

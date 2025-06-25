@@ -7,10 +7,9 @@ import com.example.demo.model.dto.AdminDTO;
 import com.example.demo.model.dto.ChangePasswordDTO;
 
 public interface AdminService {
-	public AdminDTO getAdminById(String adminId);
-	AdminDTO getAdminByUsername(String username);
-	public void addAdmin(AdminCreateDTO adminCreateDTO);
-	public void updateAdmin(AdminDTO adminDTO);
+	AdminDTO getAdminById(String adminId);
+	void addAdmin(AdminCreateDTO adminCreateDTO);
+	void updateAdmin(AdminDTO adminDTO);
 	List<AdminDTO> getAllAdmins();
 	void changePassword(String adminId, ChangePasswordDTO dto);
 }

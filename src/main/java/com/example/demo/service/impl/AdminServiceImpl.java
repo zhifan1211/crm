@@ -38,14 +38,6 @@ public class AdminServiceImpl implements AdminService {
 		return dto;
 	}
 	
-	// 用 username 得到管理者
-	@Override
-	public AdminDTO getAdminByUsername(String username) {
-	    Admin admin = adminRepository.findByUsername(username)
-	                                 .orElseThrow(() -> new AdminNotFoundException("查無此管理員"));
-	    return adminMapper.toDto(admin);
-	}
-	
 	// 新增管理者
 	@Override
 	public void addAdmin(AdminCreateDTO adminCreateDTO) {
@@ -85,7 +77,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	
-	// 取得所有管理員
+	// 取得所有管理員列表
 	@Override
 	public List<AdminDTO> getAllAdmins() {
 	    List<Admin> admins = adminRepository.findAll(); // 或可加排序如 findAll(Sort.by("createdAt").descending())
@@ -94,6 +86,7 @@ public class AdminServiceImpl implements AdminService {
 	                 .collect(Collectors.toList());
 	}
 	
+	// 管理者修改密碼
 	@Override
 	public void changePassword(String adminId, ChangePasswordDTO dto) {
 	    Admin admin = adminRepository.findById(adminId)

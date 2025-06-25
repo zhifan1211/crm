@@ -19,6 +19,7 @@ public class EmailServiceImpl implements EmailService{
 		
 	private String from = "zhifan1211@gmail.com";
 	
+	// 寄送驗證碼的信
 	public void sendVerificationCodeEmail(String to, VerificationCode code) {
 		SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
@@ -30,6 +31,7 @@ public class EmailServiceImpl implements EmailService{
         System.out.println("寄出成功給：" + to);
 	}
 	
+	// 寄送消耗點數的提醒信
 	public void sendConsumeNoticeEmail(String to, PointLog log) {
 	    if (to == null || to.isBlank()) {
 	        System.out.println("未設定 email，不發送通知。");
@@ -50,6 +52,7 @@ public class EmailServiceImpl implements EmailService{
 	    }
 	}
 	
+	// 寄送點數快到期的通知信
 	public void sendExpiryReminderEmail(String to, LocalDate expiryDate){
 	    if (to == null || to.isBlank()) {
 	        System.out.println("未設定 email，不發送通知。");

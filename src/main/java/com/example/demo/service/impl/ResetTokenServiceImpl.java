@@ -56,7 +56,7 @@ public class ResetTokenServiceImpl implements ResetTokenService{
 
 	@Override
 	public void markTokenAsUsed(String tokenId) {
-		 String tokenHash = TokenHash.hashToken(tokenId);
+		String tokenHash = TokenHash.hashToken(tokenId);
         ResetToken token = resetTokenRepository.findByTokenHash(tokenHash)
             .orElseThrow(() -> new RuntimeException("找不到 token"));
 
