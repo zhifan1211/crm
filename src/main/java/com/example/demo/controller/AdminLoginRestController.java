@@ -63,7 +63,7 @@ public class AdminLoginRestController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                  .body(ApiResponse.error(401, "登出失敗: 尚未登入"));
         }
-        session.invalidate();
+        session.removeAttribute("adminCert");
         return ResponseEntity.ok(ApiResponse.success("登出成功", null));
     }
     

@@ -39,7 +39,7 @@ public class MemberLoginRestController {
 		if(session.getAttribute("memberCert") == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error(401, "登出失敗: 尚未登入"));
 		}
-		session.invalidate();
+		session.removeAttribute("memberCert");
 		return ResponseEntity.ok(ApiResponse.success("登出成功", null));
 	}
 
